@@ -1015,6 +1015,7 @@ public:
 
 			// Save original port number to show it if bind error
 			const int _configuredPort = _primaryPort;
+			InetAddress defaultGateway;
 
 			// Make sure we can use the primary port, and hunt for one if configured to do so
 			const int portTrials = (_primaryPort == 0) ? 256 : 1; // if port is 0, pick random
@@ -1173,8 +1174,19 @@ public:
 					lastBindRefresh = 0;
 				}
 
+
+
 				// Refresh bindings in case device's interfaces have changed, and also sync routes to update any shadow routes (e.g. shadow default)
 				if (((now - lastBindRefresh) >= (_node->bondController()->inUse() ? ZT_BINDER_REFRESH_PERIOD / 4 : ZT_BINDER_REFRESH_PERIOD))||(restarted)) {
+#ifdef ZT_USE_MINIUPNPC
+
+					InetAddress newGw;
+					bool r = PortMapper::getDefaultGateway(&newGw);
+					char buf[255], buf2[255];
+					fprintf(stderr, "gateway new old %d %d %s - %s\n", r, newGw == defaultGateway, newGw.toString(buf), defaultGateway.toString(buf2));
+					defaultGateway = newGw;
+#endif
+
 					lastBindRefresh = now;
 					unsigned int p[3];
 					unsigned int pc = 0;

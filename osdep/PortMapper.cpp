@@ -58,6 +58,9 @@
 #include "natpmp.h"
 #else
 #include "../ext/libnatpmp/natpmp.h"
+extern "C" {
+#include "../ext/libnatpmp/getgateway.h"
+}
 #endif
 #endif
 
@@ -335,6 +338,27 @@ public:
 	Mutex surface_l;
 	std::vector<InetAddress> surface;
 };
+
+bool PortMapper::getDefaultGateway(InetAddress * gw2) {
+		struct in_addr gatewayaddr;
+		int r;
+#ifdef WIN32
+		uint32_t temp = 0;
+		r = getdefaultgateway(&temp);
+		gatewayaddr.S_un.S_addr = temp;
+		InetAddress gw = temp;
+#else
+		r = getdefaultgateway(&(gatewayaddr.s_addr));
+
+		InetAddress gw(gatewayaddr.s_addr,0);
+#endif
+
+		if(r>=0) {
+			*gw2 = gw;
+		}
+
+	return r >=0 ;
+}
 
 PortMapper::PortMapper(int localUdpPortToMap,const char *uniqueName)
 {

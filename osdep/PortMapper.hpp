@@ -11,6 +11,7 @@
  */
 /****/
 
+#include <netinet/in.h>
 #ifdef ZT_USE_MINIUPNPC
 
 #ifndef ZT_PORTMAPPER_HPP
@@ -54,6 +55,8 @@ public:
 	 * @return All current external mappings for our port
 	 */
 	std::vector<InetAddress> get() const;
+
+	static bool getDefaultGateway(InetAddress * gw2);
 
 private:
 	PortMapperImpl *_impl;
