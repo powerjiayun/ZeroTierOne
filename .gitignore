@@ -66,6 +66,7 @@ zt1-src.tar.gz
 *.pid
 *.pkg
 *.o
+*.d
 /*.a
 *.dylib
 *.so
