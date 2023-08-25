@@ -277,6 +277,21 @@ public:
 	void resetWithinScope(void *tPtr,InetAddress::IpScope scope,int inetAddressFamily,int64_t now);
 
 	/**
+	 * Reset paths by sending HELLOs on all known paths
+	 *
+	 * Resetting a path involves sending a full HELLO to it and then deactivating
+	 * it until or unless it responds. This is done when we detect a change
+	 * to our external IP or another system change that might invalidate
+	 * many or all current paths. This function is similar to resetWithinScope but
+	 * this function sends full HELLOs and does so on all interfaces, not known
+	 * sockets which might be invalid.
+	 *
+	 * @param tPtr Thread pointer to be handed through to any callbacks called as a result of this call
+	 * @param now Current time
+	 */
+	void resendHelloOnAllPaths(void *tPtr, int64_t now);
+
+	/**
 	 * @param now Current time
 	 * @return All known paths to this peer
 	 */
