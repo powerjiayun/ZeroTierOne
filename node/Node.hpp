@@ -283,6 +283,11 @@ public:
 		return _lowBandwidthMode;
 	}
 
+	inline void resetPeers()
+	{
+		_shouldResetPeers = true;
+	}
+
 private:
 	RuntimeEnvironment _RR;
 	RuntimeEnvironment *RR;
@@ -331,6 +336,7 @@ private:
 	volatile int64_t _prngState[2];
 	bool _online;
 	bool _lowBandwidthMode;
+	bool _shouldResetPeers = false;
 };
 
 } // namespace ZeroTier

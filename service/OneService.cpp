@@ -1191,9 +1191,13 @@ public:
 #ifdef ZT_USE_MINIUPNPC
 
 					InetAddress newGw;
-					bool r = PortMapper::getDefaultGateway(&newGw);
+					PortMapper::getDefaultGateway(&newGw);
 					char buf[255], buf2[255];
-					fprintf(stderr, "gateway new old %d %d %s - %s\n", r, newGw == defaultGateway, newGw.toString(buf), defaultGateway.toString(buf2));
+					// fprintf(stderr, "gateway new old %d %d %s - %s\n", r, newGw == defaultGateway, newGw.toString(buf), defaultGateway.toString(buf2));
+					if (!!defaultGateway && defaultGateway != newGw) {
+						fprintf(stderr, "default gateway has changed, recontacting peers\n");
+						_node->resetPeers();
+					}
 					defaultGateway = newGw;
 #endif
 

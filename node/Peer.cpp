@@ -673,15 +673,21 @@ void Peer::resetWithinScope(void *tPtr,InetAddress::IpScope scope,int inetAddres
 void Peer::resendHelloOnAllPaths(void *tPtr, int64_t now)
 {
 	Mutex::Lock _l(_paths_m);
-	for(unsigned int i=0;i<ZT_MAX_PEER_NETWORK_PATHS;++i) {
-		if (_paths[i].p) {
-			attemptToContactAt(tPtr,-1,_paths[i].p->address(),now,true);
-			_paths[i].p->sent(now);
-			_paths[i].lr = 0; // path will not be used unless it speaks again
-		} else {
-			break;
-		}
-	}
+	_lastReceive = 0;
+	_lastSentFullHello = 0;
+
+
+	// not sure if needed or if it helps much now
+
+	// for(unsigned int i=0;i<ZT_MAX_PEER_NETWORK_PATHS;++i) {
+	// 	if (_paths[i].p) {
+	// 		attemptToContactAt(tPtr,-1,_paths[i].p->address(),now,true);
+	// 		_paths[i].p->sent(now);
+	// 		_paths[i].lr = 0; // path will not be used unless it speaks again
+	// 	} else {
+	// 		break;
+	// 	}
+	// }
 }
 
 void Peer::recordOutgoingPacket(const SharedPtr<Path> &path, const uint64_t packetId,
