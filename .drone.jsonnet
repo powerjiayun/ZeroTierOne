@@ -47,7 +47,7 @@ local redhat_targets = [
 ];
 
 local jammy_targets = [
-    { "os": "linux", distro: "ubuntu", "name": "jammy",    "isas": [        "armv7", "amd64", "arm64", "ppc64le", "s390x", "riscv64" ],             "events": [ "tag" ] },
+    { "os": "linux", distro: "ubuntu", "name": "jammy",    "isas": [  "armv7", "amd64", "arm64", "ppc64le", "s390x", "riscv64" ],     "events": [ "push", "custom", "tag" ] },
 ];
 
 local master_targets = [

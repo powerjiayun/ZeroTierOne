@@ -44,6 +44,8 @@ steps:
     - tag
 trigger:
   event:
+  - push
+  - custom
   - tag
 type: docker
 volumes:
@@ -98,6 +100,8 @@ steps:
     - tag
 trigger:
   event:
+  - push
+  - custom
   - tag
 type: docker
 volumes:
@@ -153,6 +157,8 @@ steps:
     - tag
 trigger:
   event:
+  - push
+  - custom
   - tag
 type: docker
 volumes:
@@ -207,6 +213,8 @@ steps:
     - tag
 trigger:
   event:
+  - push
+  - custom
   - tag
 type: docker
 volumes:
@@ -261,6 +269,8 @@ steps:
     - tag
 trigger:
   event:
+  - push
+  - custom
   - tag
 type: docker
 volumes:
@@ -315,6 +325,8 @@ steps:
     - tag
 trigger:
   event:
+  - push
+  - custom
   - tag
 type: docker
 volumes:
@@ -370,6 +382,8 @@ steps:
     - tag
 trigger:
   event:
+  - push
+  - custom
   - tag
 type: docker
 volumes:
@@ -413,6 +427,8 @@ steps:
     - tag
 trigger:
   event:
+  - push
+  - custom
   - tag
 type: docker
 volumes:
@@ -455,6 +471,8 @@ steps:
     - tag
 trigger:
   event:
+  - push
+  - custom
   - tag
 type: docker
 volumes:
@@ -498,6 +516,8 @@ steps:
     - tag
 trigger:
   event:
+  - push
+  - custom
   - tag
 type: docker
 volumes:
@@ -540,6 +560,8 @@ steps:
     - tag
 trigger:
   event:
+  - push
+  - custom
   - tag
 type: docker
 volumes:
@@ -582,6 +604,8 @@ steps:
     - tag
 trigger:
   event:
+  - push
+  - custom
   - tag
 type: docker
 volumes:
@@ -624,6 +648,8 @@ steps:
     - tag
 trigger:
   event:
+  - push
+  - custom
   - tag
 type: docker
 volumes:
@@ -635,6 +661,6 @@ volumes:
   name: zerotier-releases
 ---
 kind: signature
-hmac: 8dd52db16c7d37a398cc365e8e655034a2efa6b96514ed1425d0c4ed43da9a43
+hmac: 2c55386ea48c510837a0c97dd09ac87f148454a42e400972e6fec9b66be7afe2
 
 ...
