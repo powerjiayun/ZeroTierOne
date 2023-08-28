@@ -2,27 +2,27 @@
 clone:
   depth: 1
 kind: pipeline
-name: bullseye 386 build
+name: el9 amd64 build
 platform:
   os: linux
 pull: always
 steps:
 - commands:
-  - ./ci/scripts/build.sh bullseye debian 386 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/build.sh el9 redhat amd64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: build
   when:
     event:
     - push
 - commands:
-  - ./ci/scripts/build.sh bullseye debian 386 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/build.sh el9 redhat amd64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: release
   when:
     event:
     - tag
 - commands:
-  - ./ci/scripts/publish.sh bullseye debian 386 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/publish.sh el9 redhat amd64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: copy build
   volumes:
@@ -32,7 +32,7 @@ steps:
     event:
     - push
 - commands:
-  - ./ci/scripts/publish.sh bullseye debian 386 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/publish.sh el9 redhat amd64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: copy relase
   volumes:
@@ -43,7 +43,6 @@ steps:
     - tag
 trigger:
   event:
-  - push
   - tag
   - custom
 type: docker
@@ -58,29 +57,28 @@ volumes:
 clone:
   depth: 1
 kind: pipeline
-name: bullseye armv7 build
+name: el9 arm64 build
 platform:
   arch: arm64
   os: linux
 pull: always
 steps:
 - commands:
-  - ./ci/scripts/build.sh bullseye debian armv7 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/build.sh el9 redhat arm64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: build
   when:
     event:
     - push
 - commands:
-  - ./ci/scripts/build.sh bullseye debian armv7 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/build.sh el9 redhat arm64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: release
   when:
     event:
     - tag
 - commands:
-  - ./ci/scripts/publish.sh bullseye debian armv7 100.0.0+${DRONE_COMMIT_SHA:0:8}
-    ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/publish.sh el9 redhat arm64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: copy build
   volumes:
@@ -90,7 +88,7 @@ steps:
     event:
     - push
 - commands:
-  - ./ci/scripts/publish.sh bullseye debian armv7 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/publish.sh el9 redhat arm64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: copy relase
   volumes:
@@ -101,7 +99,6 @@ steps:
     - tag
 trigger:
   event:
-  - push
   - tag
   - custom
 type: docker
@@ -116,28 +113,27 @@ volumes:
 clone:
   depth: 1
 kind: pipeline
-name: bullseye amd64 build
+name: el9 ppc64le build
 platform:
   os: linux
 pull: always
 steps:
 - commands:
-  - ./ci/scripts/build.sh bullseye debian amd64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/build.sh el9 redhat ppc64le 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: build
   when:
     event:
     - push
 - commands:
-  - ./ci/scripts/build.sh bullseye debian amd64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/build.sh el9 redhat ppc64le ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: release
   when:
     event:
     - tag
 - commands:
-  - ./ci/scripts/publish.sh bullseye debian amd64 100.0.0+${DRONE_COMMIT_SHA:0:8}
-    ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/publish.sh el9 redhat ppc64le 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: copy build
   volumes:
@@ -147,7 +143,7 @@ steps:
     event:
     - push
 - commands:
-  - ./ci/scripts/publish.sh bullseye debian amd64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/publish.sh el9 redhat ppc64le ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: copy relase
   volumes:
@@ -158,7 +154,6 @@ steps:
     - tag
 trigger:
   event:
-  - push
   - tag
   - custom
 type: docker
@@ -173,29 +168,27 @@ volumes:
 clone:
   depth: 1
 kind: pipeline
-name: bullseye arm64 build
+name: el9 s390x build
 platform:
-  arch: arm64
   os: linux
 pull: always
 steps:
 - commands:
-  - ./ci/scripts/build.sh bullseye debian arm64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/build.sh el9 redhat s390x 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: build
   when:
     event:
     - push
 - commands:
-  - ./ci/scripts/build.sh bullseye debian arm64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/build.sh el9 redhat s390x ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: release
   when:
     event:
     - tag
 - commands:
-  - ./ci/scripts/publish.sh bullseye debian arm64 100.0.0+${DRONE_COMMIT_SHA:0:8}
-    ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/publish.sh el9 redhat s390x 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: copy build
   volumes:
@@ -205,7 +198,7 @@ steps:
     event:
     - push
 - commands:
-  - ./ci/scripts/publish.sh bullseye debian arm64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/publish.sh el9 redhat s390x ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: copy relase
   volumes:
@@ -216,7 +209,6 @@ steps:
     - tag
 trigger:
   event:
-  - push
   - tag
   - custom
 type: docker
@@ -231,22 +223,22 @@ volumes:
 clone:
   depth: 1
 depends_on:
-- bullseye 386 build
-- bullseye armv7 build
-- bullseye amd64 build
-- bullseye arm64 build
+- el9 amd64 build
+- el9 arm64 build
+- el9 ppc64le build
+- el9 s390x build
 kind: pipeline
-name: bullseye index
+name: el9 index
 platform:
   os: linux
 pull: always
 steps:
 - commands:
-  - /usr/local/bin/index zerotier-builds debian bullseye 386 armv7 amd64 arm64
+  - /usr/local/bin/index zerotier-builds redhat el9 amd64 arm64 ppc64le s390x
   environment:
     GPG_PRIVATE_KEY:
       from_secret: gpg-private-key
-  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/apt-builder
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/dnf-builder
   name: index build
   volumes:
   - name: zerotier-builds
@@ -255,11 +247,11 @@ steps:
     event:
     - push
 - commands:
-  - /usr/local/bin/index zerotier-releases debian bullseye 386 armv7 amd64 arm64
+  - /usr/local/bin/index zerotier-releases redhat el9 amd64 arm64 ppc64le s390x
   environment:
     GPG_PRIVATE_KEY:
       from_secret: gpg-private-key
-  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/apt-builder
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/dnf-builder
   name: index release
   volumes:
   - name: zerotier-releases
@@ -269,7 +261,6 @@ steps:
     - tag
 trigger:
   event:
-  - push
   - tag
   - custom
 type: docker
@@ -284,15 +275,15 @@ volumes:
 clone:
   depth: 1
 depends_on:
-- bullseye index
+- el9 index
 kind: pipeline
-name: bullseye 386 test
+name: el9 amd64 test
 platform:
   os: linux
 pull: always
 steps:
 - commands:
-  - ./ci/scripts/test.sh bullseye debian 386 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/test.sh el9 redhat amd64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: test build
   volumes:
@@ -302,7 +293,7 @@ steps:
     event:
     - push
 - commands:
-  - ./ci/scripts/test.sh bullseye debian 386 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/test.sh el9 redhat amd64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: test release
   volumes:
@@ -313,7 +304,6 @@ steps:
     - tag
 trigger:
   event:
-  - push
   - tag
   - custom
 type: docker
@@ -328,16 +318,16 @@ volumes:
 clone:
   depth: 1
 depends_on:
-- bullseye index
+- el9 index
 kind: pipeline
-name: bullseye armv7 test
+name: el9 arm64 test
 platform:
   arch: arm64
   os: linux
 pull: always
 steps:
 - commands:
-  - ./ci/scripts/test.sh bullseye debian armv7 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/test.sh el9 redhat arm64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: test build
   volumes:
@@ -347,7 +337,7 @@ steps:
     event:
     - push
 - commands:
-  - ./ci/scripts/test.sh bullseye debian armv7 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/test.sh el9 redhat arm64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: test release
   volumes:
@@ -358,7 +348,6 @@ steps:
     - tag
 trigger:
   event:
-  - push
   - tag
   - custom
 type: docker
@@ -373,15 +362,15 @@ volumes:
 clone:
   depth: 1
 depends_on:
-- bullseye index
+- el9 index
 kind: pipeline
-name: bullseye amd64 test
+name: el9 ppc64le test
 platform:
   os: linux
 pull: always
 steps:
 - commands:
-  - ./ci/scripts/test.sh bullseye debian amd64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/test.sh el9 redhat ppc64le 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: test build
   volumes:
@@ -391,7 +380,7 @@ steps:
     event:
     - push
 - commands:
-  - ./ci/scripts/test.sh bullseye debian amd64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/test.sh el9 redhat ppc64le ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: test release
   volumes:
@@ -402,7 +391,6 @@ steps:
     - tag
 trigger:
   event:
-  - push
   - tag
   - custom
 type: docker
@@ -417,16 +405,15 @@ volumes:
 clone:
   depth: 1
 depends_on:
-- bullseye index
+- el9 index
 kind: pipeline
-name: bullseye arm64 test
+name: el9 s390x test
 platform:
-  arch: arm64
   os: linux
 pull: always
 steps:
 - commands:
-  - ./ci/scripts/test.sh bullseye debian arm64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/test.sh el9 redhat s390x 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: test build
   volumes:
@@ -436,7 +423,7 @@ steps:
     event:
     - push
 - commands:
-  - ./ci/scripts/test.sh bullseye debian arm64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/test.sh el9 redhat s390x ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: test release
   volumes:
@@ -447,7 +434,6 @@ steps:
     - tag
 trigger:
   event:
-  - push
   - tag
   - custom
 type: docker
@@ -460,6 +446,6 @@ volumes:
   name: zerotier-releases
 ---
 kind: signature
-hmac: 887a3ef78d3fe8f0149911e1e4876401dd7dd313b36eb893e791fa42f45d7768
+hmac: ddd6191065e85628d22d353e74e8e08c4696edb4fe8240eaeb1a95b1afb6c86f
 
 ...
