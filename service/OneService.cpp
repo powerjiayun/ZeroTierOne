@@ -1068,7 +1068,7 @@ public:
 				if (_secondaryPort) {
 					_ports[1] = _secondaryPort;
 				} else {
-					_ports[1] = _secondaryPort = _getRandomPort();
+					_ports[1] = _getRandomPort();
 				}
 			}
 #ifdef ZT_USE_MINIUPNPC
@@ -1180,8 +1180,9 @@ public:
 				if (_node->online()) {
 					lastOnline = now;
 				} else if ((_secondaryPort == 0)&&((now - lastOnline) > ZT_PATH_HEARTBEAT_PERIOD)) {
-					_secondaryPort = _getRandomPort();
+					_ports[1] = _getRandomPort();
 					lastBindRefresh = 0;
+					lastOnline = now;
 				}
 
 
@@ -1196,6 +1197,7 @@ public:
 					// fprintf(stderr, "gateway new old %d %d %s - %s\n", r, newGw == defaultGateway, newGw.toString(buf), defaultGateway.toString(buf2));
 					if (!!defaultGateway && defaultGateway != newGw) {
 						fprintf(stderr, "default gateway has changed, recontacting peers\n");
+						lastOnline = 0;
 						_node->resetPeers();
 					}
 					defaultGateway = newGw;
@@ -2053,7 +2055,7 @@ public:
             settings["allowTcpFallbackRelay"] = OSUtils::jsonBool(settings["allowTcpFallbackRelay"],_allowTcpFallbackRelay);
             settings["forceTcpRelay"] = OSUtils::jsonBool(settings["forceTcpRelay"],_forceTcpRelay);
             settings["primaryPort"] = OSUtils::jsonInt(settings["primaryPort"],(uint64_t)_primaryPort) & 0xffff;
-            settings["secondaryPort"] = OSUtils::jsonInt(settings["secondaryPort"],(uint64_t)_secondaryPort) & 0xffff;
+            settings["secondaryPort"] = OSUtils::jsonInt(settings["secondaryPort"],(uint64_t)_ports[1]) & 0xffff;
             settings["tertiaryPort"] = OSUtils::jsonInt(settings["tertiaryPort"],(uint64_t)_tertiaryPort) & 0xffff;
             // Enumerate all local address/port pairs that this node is listening on
             std::vector<InetAddress> boundAddrs(_binder.allBoundLocalInterfaceAddresses());
