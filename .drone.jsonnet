@@ -38,13 +38,12 @@ local less_targets = [
       { "os": "linux", distro: "ubuntu", "name": "focal",    "isas": [        "armv7", "amd64", "arm64" ],             "events": [ "push", "tag", "custom" ] },
 ];
 
-
 local native_targets = [
     { "os": "linux", distro: "debian", "name": "bullseye", "isas": [ "386", "armv7", "amd64", "arm64" ],            "events": [ "push", "tag", "custom" ] },
 ];
 
 local redhat_targets = [
-    { "os": "linux", distro: "redhat", "name": "el9",      "isas": [                 "amd64", "arm64", "ppc64le", "s390x" ],                        "events": [ "tag", "custom" ] },
+    { "os": "linux", distro: "redhat", "name": "el9",      "isas": [  "amd64", "arm64", "ppc64le", "s390x" ], "events": [ "push", "tag", "custom" ] },
 ];
 
 local master_targets = [
