@@ -46,6 +46,10 @@ local redhat_targets = [
     { "os": "linux", distro: "redhat", "name": "el9",      "isas": [  "amd64", "arm64", "ppc64le", "s390x" ], "events": [ "push", "tag", "custom" ] },
 ];
 
+local jammy_targets = [
+    { "os": "linux", distro: "ubuntu", "name": "jammy",    "isas": [        "armv7", "amd64", "arm64", "ppc64le", "s390x", "riscv64" ],             "events": [ "tag" ] },
+];
+
 local master_targets = [
       //
       // copypasta from here
@@ -247,13 +251,13 @@ std.flattenArrays([
     [
       Index(p)
     ]
-    for p in redhat_targets
+    for p in jammy_targets
  ]) +
  std.flattenArrays([
      [
         Test(p.os, p.distro, p.name, isa, p.events)
          for isa in p.isas
      ]
-     for p in redhat_targets
+     for p in jammy_targets
  ])
  

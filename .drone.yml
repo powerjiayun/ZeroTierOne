@@ -2,84 +2,28 @@
 clone:
   depth: 1
 kind: pipeline
-name: el9 amd64 build
-platform:
-  os: linux
-pull: always
-steps:
-- commands:
-  - ./ci/scripts/build.sh el9 redhat amd64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
-  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
-  name: build
-  when:
-    event:
-    - push
-- commands:
-  - ./ci/scripts/build.sh el9 redhat amd64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
-  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
-  name: release
-  when:
-    event:
-    - tag
-- commands:
-  - ./ci/scripts/publish.sh el9 redhat amd64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
-  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
-  name: copy build
-  volumes:
-  - name: zerotier-builds
-    path: /zerotier-builds
-  when:
-    event:
-    - push
-- commands:
-  - ./ci/scripts/publish.sh el9 redhat amd64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
-  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
-  name: copy relase
-  volumes:
-  - name: zerotier-releases
-    path: /zerotier-releases
-  when:
-    event:
-    - tag
-trigger:
-  event:
-  - push
-  - tag
-  - custom
-type: docker
-volumes:
-- host:
-    path: /zerotier-builds
-  name: zerotier-builds
-- host:
-    path: /zerotier-releases
-  name: zerotier-releases
----
-clone:
-  depth: 1
-kind: pipeline
-name: el9 arm64 build
+name: jammy armv7 build
 platform:
   arch: arm64
   os: linux
 pull: always
 steps:
 - commands:
-  - ./ci/scripts/build.sh el9 redhat arm64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/build.sh jammy ubuntu armv7 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: build
   when:
     event:
     - push
 - commands:
-  - ./ci/scripts/build.sh el9 redhat arm64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/build.sh jammy ubuntu armv7 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: release
   when:
     event:
     - tag
 - commands:
-  - ./ci/scripts/publish.sh el9 redhat arm64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/publish.sh jammy ubuntu armv7 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: copy build
   volumes:
@@ -89,7 +33,7 @@ steps:
     event:
     - push
 - commands:
-  - ./ci/scripts/publish.sh el9 redhat arm64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/publish.sh jammy ubuntu armv7 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: copy relase
   volumes:
@@ -100,9 +44,7 @@ steps:
     - tag
 trigger:
   event:
-  - push
   - tag
-  - custom
 type: docker
 volumes:
 - host:
@@ -115,27 +57,27 @@ volumes:
 clone:
   depth: 1
 kind: pipeline
-name: el9 ppc64le build
+name: jammy amd64 build
 platform:
   os: linux
 pull: always
 steps:
 - commands:
-  - ./ci/scripts/build.sh el9 redhat ppc64le 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/build.sh jammy ubuntu amd64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: build
   when:
     event:
     - push
 - commands:
-  - ./ci/scripts/build.sh el9 redhat ppc64le ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/build.sh jammy ubuntu amd64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: release
   when:
     event:
     - tag
 - commands:
-  - ./ci/scripts/publish.sh el9 redhat ppc64le 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/publish.sh jammy ubuntu amd64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: copy build
   volumes:
@@ -145,7 +87,7 @@ steps:
     event:
     - push
 - commands:
-  - ./ci/scripts/publish.sh el9 redhat ppc64le ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/publish.sh jammy ubuntu amd64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: copy relase
   volumes:
@@ -156,9 +98,7 @@ steps:
     - tag
 trigger:
   event:
-  - push
   - tag
-  - custom
 type: docker
 volumes:
 - host:
@@ -171,27 +111,28 @@ volumes:
 clone:
   depth: 1
 kind: pipeline
-name: el9 s390x build
+name: jammy arm64 build
 platform:
+  arch: arm64
   os: linux
 pull: always
 steps:
 - commands:
-  - ./ci/scripts/build.sh el9 redhat s390x 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/build.sh jammy ubuntu arm64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: build
   when:
     event:
     - push
 - commands:
-  - ./ci/scripts/build.sh el9 redhat s390x ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/build.sh jammy ubuntu arm64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: release
   when:
     event:
     - tag
 - commands:
-  - ./ci/scripts/publish.sh el9 redhat s390x 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/publish.sh jammy ubuntu arm64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: copy build
   volumes:
@@ -201,7 +142,7 @@ steps:
     event:
     - push
 - commands:
-  - ./ci/scripts/publish.sh el9 redhat s390x ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/publish.sh jammy ubuntu arm64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: copy relase
   volumes:
@@ -212,9 +153,169 @@ steps:
     - tag
 trigger:
   event:
-  - push
   - tag
-  - custom
+type: docker
+volumes:
+- host:
+    path: /zerotier-builds
+  name: zerotier-builds
+- host:
+    path: /zerotier-releases
+  name: zerotier-releases
+---
+clone:
+  depth: 1
+kind: pipeline
+name: jammy ppc64le build
+platform:
+  os: linux
+pull: always
+steps:
+- commands:
+  - ./ci/scripts/build.sh jammy ubuntu ppc64le 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: build
+  when:
+    event:
+    - push
+- commands:
+  - ./ci/scripts/build.sh jammy ubuntu ppc64le ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: release
+  when:
+    event:
+    - tag
+- commands:
+  - ./ci/scripts/publish.sh jammy ubuntu ppc64le 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: copy build
+  volumes:
+  - name: zerotier-builds
+    path: /zerotier-builds
+  when:
+    event:
+    - push
+- commands:
+  - ./ci/scripts/publish.sh jammy ubuntu ppc64le ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: copy relase
+  volumes:
+  - name: zerotier-releases
+    path: /zerotier-releases
+  when:
+    event:
+    - tag
+trigger:
+  event:
+  - tag
+type: docker
+volumes:
+- host:
+    path: /zerotier-builds
+  name: zerotier-builds
+- host:
+    path: /zerotier-releases
+  name: zerotier-releases
+---
+clone:
+  depth: 1
+kind: pipeline
+name: jammy s390x build
+platform:
+  os: linux
+pull: always
+steps:
+- commands:
+  - ./ci/scripts/build.sh jammy ubuntu s390x 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: build
+  when:
+    event:
+    - push
+- commands:
+  - ./ci/scripts/build.sh jammy ubuntu s390x ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: release
+  when:
+    event:
+    - tag
+- commands:
+  - ./ci/scripts/publish.sh jammy ubuntu s390x 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: copy build
+  volumes:
+  - name: zerotier-builds
+    path: /zerotier-builds
+  when:
+    event:
+    - push
+- commands:
+  - ./ci/scripts/publish.sh jammy ubuntu s390x ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: copy relase
+  volumes:
+  - name: zerotier-releases
+    path: /zerotier-releases
+  when:
+    event:
+    - tag
+trigger:
+  event:
+  - tag
+type: docker
+volumes:
+- host:
+    path: /zerotier-builds
+  name: zerotier-builds
+- host:
+    path: /zerotier-releases
+  name: zerotier-releases
+---
+clone:
+  depth: 1
+kind: pipeline
+name: jammy riscv64 build
+platform:
+  os: linux
+pull: always
+steps:
+- commands:
+  - ./ci/scripts/build.sh jammy ubuntu riscv64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: build
+  when:
+    event:
+    - push
+- commands:
+  - ./ci/scripts/build.sh jammy ubuntu riscv64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: release
+  when:
+    event:
+    - tag
+- commands:
+  - ./ci/scripts/publish.sh jammy ubuntu riscv64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: copy build
+  volumes:
+  - name: zerotier-builds
+    path: /zerotier-builds
+  when:
+    event:
+    - push
+- commands:
+  - ./ci/scripts/publish.sh jammy ubuntu riscv64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: copy relase
+  volumes:
+  - name: zerotier-releases
+    path: /zerotier-releases
+  when:
+    event:
+    - tag
+trigger:
+  event:
+  - tag
 type: docker
 volumes:
 - host:
@@ -227,22 +328,25 @@ volumes:
 clone:
   depth: 1
 depends_on:
-- el9 amd64 build
-- el9 arm64 build
-- el9 ppc64le build
-- el9 s390x build
+- jammy armv7 build
+- jammy amd64 build
+- jammy arm64 build
+- jammy ppc64le build
+- jammy s390x build
+- jammy riscv64 build
 kind: pipeline
-name: el9 index
+name: jammy index
 platform:
   os: linux
 pull: always
 steps:
 - commands:
-  - /usr/local/bin/index zerotier-builds redhat el9 amd64 arm64 ppc64le s390x
+  - /usr/local/bin/index zerotier-builds ubuntu jammy armv7 amd64 arm64 ppc64le s390x
+    riscv64
   environment:
     GPG_PRIVATE_KEY:
       from_secret: gpg-private-key
-  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/dnf-builder
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/apt-builder
   name: index build
   volumes:
   - name: zerotier-builds
@@ -251,11 +355,12 @@ steps:
     event:
     - push
 - commands:
-  - /usr/local/bin/index zerotier-releases redhat el9 amd64 arm64 ppc64le s390x
+  - /usr/local/bin/index zerotier-releases ubuntu jammy armv7 amd64 arm64 ppc64le
+    s390x riscv64
   environment:
     GPG_PRIVATE_KEY:
       from_secret: gpg-private-key
-  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/dnf-builder
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/apt-builder
   name: index release
   volumes:
   - name: zerotier-releases
@@ -265,9 +370,7 @@ steps:
     - tag
 trigger:
   event:
-  - push
   - tag
-  - custom
 type: docker
 volumes:
 - host:
@@ -280,60 +383,16 @@ volumes:
 clone:
   depth: 1
 depends_on:
-- el9 index
+- jammy index
 kind: pipeline
-name: el9 amd64 test
-platform:
-  os: linux
-pull: always
-steps:
-- commands:
-  - ./ci/scripts/test.sh el9 redhat amd64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
-  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
-  name: test build
-  volumes:
-  - name: zerotier-builds
-    path: /zerotier-builds
-  when:
-    event:
-    - push
-- commands:
-  - ./ci/scripts/test.sh el9 redhat amd64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
-  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
-  name: test release
-  volumes:
-  - name: zerotier-releases
-    path: /zerotier-releases
-  when:
-    event:
-    - tag
-trigger:
-  event:
-  - push
-  - tag
-  - custom
-type: docker
-volumes:
-- host:
-    path: /zerotier-builds
-  name: zerotier-builds
-- host:
-    path: /zerotier-releases
-  name: zerotier-releases
----
-clone:
-  depth: 1
-depends_on:
-- el9 index
-kind: pipeline
-name: el9 arm64 test
+name: jammy armv7 test
 platform:
   arch: arm64
   os: linux
 pull: always
 steps:
 - commands:
-  - ./ci/scripts/test.sh el9 redhat arm64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/test.sh jammy ubuntu armv7 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: test build
   volumes:
@@ -343,7 +402,7 @@ steps:
     event:
     - push
 - commands:
-  - ./ci/scripts/test.sh el9 redhat arm64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/test.sh jammy ubuntu armv7 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: test release
   volumes:
@@ -354,9 +413,7 @@ steps:
     - tag
 trigger:
   event:
-  - push
   - tag
-  - custom
 type: docker
 volumes:
 - host:
@@ -369,15 +426,15 @@ volumes:
 clone:
   depth: 1
 depends_on:
-- el9 index
+- jammy index
 kind: pipeline
-name: el9 ppc64le test
+name: jammy amd64 test
 platform:
   os: linux
 pull: always
 steps:
 - commands:
-  - ./ci/scripts/test.sh el9 redhat ppc64le 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/test.sh jammy ubuntu amd64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: test build
   volumes:
@@ -387,7 +444,7 @@ steps:
     event:
     - push
 - commands:
-  - ./ci/scripts/test.sh el9 redhat ppc64le ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/test.sh jammy ubuntu amd64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: test release
   volumes:
@@ -398,9 +455,7 @@ steps:
     - tag
 trigger:
   event:
-  - push
   - tag
-  - custom
 type: docker
 volumes:
 - host:
@@ -413,15 +468,16 @@ volumes:
 clone:
   depth: 1
 depends_on:
-- el9 index
+- jammy index
 kind: pipeline
-name: el9 s390x test
+name: jammy arm64 test
 platform:
+  arch: arm64
   os: linux
 pull: always
 steps:
 - commands:
-  - ./ci/scripts/test.sh el9 redhat s390x 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/test.sh jammy ubuntu arm64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: test build
   volumes:
@@ -431,7 +487,7 @@ steps:
     event:
     - push
 - commands:
-  - ./ci/scripts/test.sh el9 redhat s390x ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  - ./ci/scripts/test.sh jammy ubuntu arm64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
   image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
   name: test release
   volumes:
@@ -442,9 +498,133 @@ steps:
     - tag
 trigger:
   event:
-  - push
   - tag
-  - custom
+type: docker
+volumes:
+- host:
+    path: /zerotier-builds
+  name: zerotier-builds
+- host:
+    path: /zerotier-releases
+  name: zerotier-releases
+---
+clone:
+  depth: 1
+depends_on:
+- jammy index
+kind: pipeline
+name: jammy ppc64le test
+platform:
+  os: linux
+pull: always
+steps:
+- commands:
+  - ./ci/scripts/test.sh jammy ubuntu ppc64le 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: test build
+  volumes:
+  - name: zerotier-builds
+    path: /zerotier-builds
+  when:
+    event:
+    - push
+- commands:
+  - ./ci/scripts/test.sh jammy ubuntu ppc64le ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: test release
+  volumes:
+  - name: zerotier-releases
+    path: /zerotier-releases
+  when:
+    event:
+    - tag
+trigger:
+  event:
+  - tag
+type: docker
+volumes:
+- host:
+    path: /zerotier-builds
+  name: zerotier-builds
+- host:
+    path: /zerotier-releases
+  name: zerotier-releases
+---
+clone:
+  depth: 1
+depends_on:
+- jammy index
+kind: pipeline
+name: jammy s390x test
+platform:
+  os: linux
+pull: always
+steps:
+- commands:
+  - ./ci/scripts/test.sh jammy ubuntu s390x 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: test build
+  volumes:
+  - name: zerotier-builds
+    path: /zerotier-builds
+  when:
+    event:
+    - push
+- commands:
+  - ./ci/scripts/test.sh jammy ubuntu s390x ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: test release
+  volumes:
+  - name: zerotier-releases
+    path: /zerotier-releases
+  when:
+    event:
+    - tag
+trigger:
+  event:
+  - tag
+type: docker
+volumes:
+- host:
+    path: /zerotier-builds
+  name: zerotier-builds
+- host:
+    path: /zerotier-releases
+  name: zerotier-releases
+---
+clone:
+  depth: 1
+depends_on:
+- jammy index
+kind: pipeline
+name: jammy riscv64 test
+platform:
+  os: linux
+pull: always
+steps:
+- commands:
+  - ./ci/scripts/test.sh jammy ubuntu riscv64 100.0.0+${DRONE_COMMIT_SHA:0:8} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: test build
+  volumes:
+  - name: zerotier-builds
+    path: /zerotier-builds
+  when:
+    event:
+    - push
+- commands:
+  - ./ci/scripts/test.sh jammy ubuntu riscv64 ${DRONE_TAG} ${DRONE_BUILD_EVENT}
+  image: 084037375216.dkr.ecr.us-east-2.amazonaws.com/honda-builder
+  name: test release
+  volumes:
+  - name: zerotier-releases
+    path: /zerotier-releases
+  when:
+    event:
+    - tag
+trigger:
+  event:
+  - tag
 type: docker
 volumes:
 - host:
@@ -455,6 +635,6 @@ volumes:
   name: zerotier-releases
 ---
 kind: signature
-hmac: c47ab8a1212ec8892a05d9554821bbe1ae41cf85ee2a5851f9ab9f72989f306c
+hmac: 8dd52db16c7d37a398cc365e8e655034a2efa6b96514ed1425d0c4ed43da9a43
 
 ...
