@@ -1130,9 +1130,11 @@ public:
 			int64_t lastBindRefresh = 0;
 			int64_t lastUpdateCheck = clockShouldBe;
 			int64_t lastCleanedPeersDb = 0;
-			int64_t lastLocalInterfaceAddressCheck = (clockShouldBe - ZT_LOCAL_INTERFACE_CHECK_INTERVAL) + 15000; // do this in 15s to give portmapper time to configure and other things time to settle
+			// int64_t lastLocalInterfaceAddressCheck = (clockShouldBe - ZT_LOCAL_INTERFACE_CHECK_INTERVAL) + 15000; // do this in 15s to give portmapper time to configure and other things time to settle
 			int64_t lastLocalConfFileCheck = OSUtils::now();
 			int64_t lastOnline = lastLocalConfFileCheck;
+			bool gatewayChanged = false;
+			int64_t lastGatewayCheck = 0;
 			for(;;) {
 				_run_m.lock();
 				if (!_run) {
@@ -1174,36 +1176,40 @@ public:
 					}
 				}
 
+#ifdef ZT_USE_MINIUPNPC
+
+				if ((now - lastGatewayCheck) >= 10000) {
+					InetAddress newGw;
+					PortMapper::getDefaultGateway(&newGw);
+					lastGatewayCheck = now;
+					if (newGw.ipScope() != InetAddress::IP_SCOPE_LOOPBACK) {
+						if (!!defaultGateway && defaultGateway != newGw) {
+							char buf1[255], buf2[255]; fprintf(stderr, "default gw changed %s - %s\n", defaultGateway.toIpString(buf1), newGw.toIpString(buf2));
+							gatewayChanged = true;
+						}
+						defaultGateway = newGw;
+					}
+				}
+#endif
+
 				// If secondary port is not configured to a constant value and we've been offline for a while,
 				// bind a new secondary port. This is a workaround for a "coma" issue caused by buggy NATs that stop
 				// working on one port after a while.
-				if (_node->online()) {
-					lastOnline = now;
-				} else if ((_secondaryPort == 0)&&((now - lastOnline) > ZT_PATH_HEARTBEAT_PERIOD)) {
-					_ports[1] = _getRandomPort();
-					lastBindRefresh = 0;
-					lastOnline = now;
+				if (_secondaryPort == 0) {
+					if (_node->online()) {
+						lastOnline = now;
+					}
+					if ((now - lastOnline) > ZT_PATH_HEARTBEAT_PERIOD || gatewayChanged || restarted) {
+						fprintf(stderr, "randomized secondary port\n");
+						_ports[1] = _getRandomPort();
+						lastOnline = now; // don't keep spamming this branch. online() will be false for a few seconds
+						fprintf(stderr, "now - lastBindRefresh %llu - %d\n", now - lastBindRefresh, ZT_BINDER_REFRESH_PERIOD); // why not
+					}
 				}
 
 
-
 				// Refresh bindings in case device's interfaces have changed, and also sync routes to update any shadow routes (e.g. shadow default)
-				if (((now - lastBindRefresh) >= (_node->bondController()->inUse() ? ZT_BINDER_REFRESH_PERIOD / 4 : ZT_BINDER_REFRESH_PERIOD))||(restarted)) {
-#ifdef ZT_USE_MINIUPNPC
-
-					InetAddress newGw;
-					PortMapper::getDefaultGateway(&newGw);
-					char buf[255], buf2[255];
-					// fprintf(stderr, "gateway new old %d %d %s - %s\n", r, newGw == defaultGateway, newGw.toString(buf), defaultGateway.toString(buf2));
-					if (!!defaultGateway && defaultGateway != newGw) {
-						fprintf(stderr, "default gateway has changed, recontacting peers\n");
-						lastOnline = 0;
-						_node->resetPeers();
-					}
-					defaultGateway = newGw;
-#endif
-
-					lastBindRefresh = now;
+				if (((now - lastBindRefresh) >= (_node->bondController()->inUse() ? ZT_BINDER_REFRESH_PERIOD / 4 : ZT_BINDER_REFRESH_PERIOD))||restarted||gatewayChanged) {
 					unsigned int p[3];
 					unsigned int pc = 0;
 					for(int i=0;i<3;++i) {
@@ -1214,6 +1220,30 @@ public:
 						// Only bother binding UDP ports if we aren't forcing TCP-relay mode
 						_binder.refresh(_phy,p,pc,explicitBind,*this);
 					}
+
+					lastBindRefresh = now;
+
+					// Sync information about physical network interfaces
+					_node->clearLocalInterfaceAddresses();
+#ifdef ZT_USE_MINIUPNPC
+					if (_portMapper) {
+						std::vector<InetAddress> mappedAddresses(_portMapper->get());
+						for(std::vector<InetAddress>::const_iterator ext(mappedAddresses.begin());ext!=mappedAddresses.end();++ext)
+							_node->addLocalInterfaceAddress(reinterpret_cast<const struct sockaddr_storage *>(&(*ext)));
+					}
+#endif
+					std::vector<InetAddress> boundAddrs(_binder.allBoundLocalInterfaceAddresses());
+					for(std::vector<InetAddress>::const_iterator i(boundAddrs.begin());i!=boundAddrs.end();++i) {
+						_node->addLocalInterfaceAddress(reinterpret_cast<const struct sockaddr_storage *>(&(*i)));
+					}
+
+					// reset peers _after_ binder refresh
+					if (gatewayChanged) {
+						fprintf(stderr, "default gateway has changed, recontacting peers\n");
+						_node->resetPeers();
+					}
+
+
 					{
 						Mutex::Lock _l(_nets_m);
 						for(std::map<uint64_t,NetworkState>::iterator n(_nets.begin());n!=_nets.end();++n) {
@@ -1257,26 +1287,6 @@ public:
 					}
 				}
 
-				// Sync information about physical network interfaces
-				if ((now - lastLocalInterfaceAddressCheck) >= (_node->bondController()->inUse() ? ZT_LOCAL_INTERFACE_CHECK_INTERVAL / 8 : ZT_LOCAL_INTERFACE_CHECK_INTERVAL)) {
-					lastLocalInterfaceAddressCheck = now;
-
-					_node->clearLocalInterfaceAddresses();
-
-#ifdef ZT_USE_MINIUPNPC
-					if (_portMapper) {
-						std::vector<InetAddress> mappedAddresses(_portMapper->get());
-						for(std::vector<InetAddress>::const_iterator ext(mappedAddresses.begin());ext!=mappedAddresses.end();++ext)
-							_node->addLocalInterfaceAddress(reinterpret_cast<const struct sockaddr_storage *>(&(*ext)));
-					}
-#endif
-
-					std::vector<InetAddress> boundAddrs(_binder.allBoundLocalInterfaceAddresses());
-					for(std::vector<InetAddress>::const_iterator i(boundAddrs.begin());i!=boundAddrs.end();++i) {
-						_node->addLocalInterfaceAddress(reinterpret_cast<const struct sockaddr_storage *>(&(*i)));
-					}
-				}
-
 				// Clean peers.d periodically
 				if ((now - lastCleanedPeersDb) >= 3600000) {
 					lastCleanedPeersDb = now;
@@ -1285,6 +1295,7 @@ public:
 
 				const unsigned long delay = (dl > now) ? (unsigned long)(dl - now) : 500;
 				clockShouldBe = now + (int64_t)delay;
+				gatewayChanged = false;
 				_phy.poll(delay);
 			}
 		} catch (std::exception &e) {
