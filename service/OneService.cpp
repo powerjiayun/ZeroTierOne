@@ -1133,8 +1133,6 @@ public:
 			// int64_t lastLocalInterfaceAddressCheck = (clockShouldBe - ZT_LOCAL_INTERFACE_CHECK_INTERVAL) + 15000; // do this in 15s to give portmapper time to configure and other things time to settle
 			int64_t lastLocalConfFileCheck = OSUtils::now();
 			int64_t lastOnline = lastLocalConfFileCheck;
-			bool gatewayChanged = false;
-			int64_t lastGatewayCheck = 0;
 			for(;;) {
 				_run_m.lock();
 				if (!_run) {
@@ -1176,22 +1174,6 @@ public:
 					}
 				}
 
-#ifdef ZT_USE_MINIUPNPC
-
-				if ((now - lastGatewayCheck) >= 10000) {
-					InetAddress newGw;
-					PortMapper::getDefaultGateway(&newGw);
-					lastGatewayCheck = now;
-					if (newGw.ipScope() != InetAddress::IP_SCOPE_LOOPBACK) {
-						if (!!defaultGateway && defaultGateway != newGw) {
-							char buf1[255], buf2[255]; fprintf(stderr, "default gw changed %s - %s\n", defaultGateway.toIpString(buf1), newGw.toIpString(buf2));
-							gatewayChanged = true;
-						}
-						defaultGateway = newGw;
-					}
-				}
-#endif
-
 				// If secondary port is not configured to a constant value and we've been offline for a while,
 				// bind a new secondary port. This is a workaround for a "coma" issue caused by buggy NATs that stop
 				// working on one port after a while.
@@ -1199,17 +1181,18 @@ public:
 					if (_node->online()) {
 						lastOnline = now;
 					}
-					if ((now - lastOnline) > ZT_PATH_HEARTBEAT_PERIOD || gatewayChanged || restarted) {
-						fprintf(stderr, "randomized secondary port\n");
+					if ((now - lastOnline) > ZT_PATH_HEARTBEAT_PERIOD  || restarted) {
 						_ports[1] = _getRandomPort();
+#if ZT_DEBUG==1
+						fprintf(stderr, "randomized secondary port. Now it's %d\n", _ports[1]);
+#endif
 						lastOnline = now; // don't keep spamming this branch. online() will be false for a few seconds
-						fprintf(stderr, "now - lastBindRefresh %llu - %d\n", now - lastBindRefresh, ZT_BINDER_REFRESH_PERIOD); // why not
 					}
 				}
 
 
 				// Refresh bindings in case device's interfaces have changed, and also sync routes to update any shadow routes (e.g. shadow default)
-				if (((now - lastBindRefresh) >= (_node->bondController()->inUse() ? ZT_BINDER_REFRESH_PERIOD / 4 : ZT_BINDER_REFRESH_PERIOD))||restarted||gatewayChanged) {
+				if (((now - lastBindRefresh) >= (_node->bondController()->inUse() ? ZT_BINDER_REFRESH_PERIOD / 4 : ZT_BINDER_REFRESH_PERIOD))||restarted) {
 					unsigned int p[3];
 					unsigned int pc = 0;
 					for(int i=0;i<3;++i) {
@@ -1236,13 +1219,6 @@ public:
 					for(std::vector<InetAddress>::const_iterator i(boundAddrs.begin());i!=boundAddrs.end();++i) {
 						_node->addLocalInterfaceAddress(reinterpret_cast<const struct sockaddr_storage *>(&(*i)));
 					}
-
-					// reset peers _after_ binder refresh
-					if (gatewayChanged) {
-						fprintf(stderr, "default gateway has changed, recontacting peers\n");
-						_node->resetPeers();
-					}
-
 
 					{
 						Mutex::Lock _l(_nets_m);
@@ -1295,7 +1271,6 @@ public:
 
 				const unsigned long delay = (dl > now) ? (unsigned long)(dl - now) : 500;
 				clockShouldBe = now + (int64_t)delay;
-				gatewayChanged = false;
 				_phy.poll(delay);
 			}
 		} catch (std::exception &e) {
