@@ -234,12 +234,11 @@ ZT_ResultCode Node::processVirtualNetworkFrame(
 class _PingPeersThatNeedPing
 {
 public:
-	_PingPeersThatNeedPing(const RuntimeEnvironment *renv,void *tPtr,Hashtable< Address,std::vector<InetAddress> > &alwaysContact,int64_t now, bool shouldResetPeers) :
+	_PingPeersThatNeedPing(const RuntimeEnvironment *renv,void *tPtr,Hashtable< Address,std::vector<InetAddress> > &alwaysContact,int64_t now) :
 		RR(renv),
 		_tPtr(tPtr),
 		_alwaysContact(alwaysContact),
 		_now(now),
-		_shouldResetPeers(shouldResetPeers),
 		_bestCurrentUpstream(RR->topology->getUpstreamPeer())
 	{
 	}
@@ -247,12 +246,6 @@ public:
 	inline void operator()(Topology &t,const SharedPtr<Peer> &p)
 	{
 		const std::vector<InetAddress> *const alwaysContactEndpoints = _alwaysContact.get(p->address());
-
-		if (_shouldResetPeers) {
-			// To be triggered when there is a gateway change or some condition that invalidates current surface addresses
-			p->resendHelloOnAllPaths(_tPtr,_now);
-			return;
-		}
 		if (alwaysContactEndpoints) {
 
 			ZT_PeerRole role = RR->topology->role(p->address());
@@ -311,7 +304,6 @@ private:
 	void *_tPtr;
 	Hashtable< Address,std::vector<InetAddress> > &_alwaysContact;
 	const int64_t _now;
-	bool _shouldResetPeers;
 	const SharedPtr<Peer> _bestCurrentUpstream;
 };
 
@@ -393,16 +385,8 @@ ZT_ResultCode Node::processBackgroundTasks(void *tptr,int64_t now,volatile int64
 			}
 
 			// Ping active peers, upstreams, and others that we should always contact
-
-			if (_shouldResetPeers ) {
-				fprintf(stderr, "_shouldResetPeers\n");
-
-				lastReceivedFromUpstream = 0;
-			}
-			_PingPeersThatNeedPing pfunc(RR,tptr,alwaysContact,now, _shouldResetPeers);
+			_PingPeersThatNeedPing pfunc(RR,tptr,alwaysContact,now);
 			RR->topology->eachPeer<_PingPeersThatNeedPing &>(pfunc);
-
-			_shouldResetPeers = false;
 
 			// Run WHOIS to create Peer for alwaysContact addresses that could not be contacted
 			{
